@@ -24,5 +24,5 @@ cp -f kubernetes.yml.tmp kubernetes.yml
 # Apply the stack.
 $KUBECTL_CMD apply -f kubernetes.yml
 
-rm -f kubernetes.yml*
+rm -f kubernetes.yml
 rm .env
