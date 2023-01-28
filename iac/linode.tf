@@ -15,6 +15,7 @@ resource "linode_instance" "manager" {
   region          = var.linode.region
   type            = var.linode.manager.type
   image           = var.linode.manager.os
+  tags            = [ var.application.label ]
   private_ip      = true
   authorized_keys = [ linode_sshkey.application.ssh_key ]
 
@@ -47,6 +48,7 @@ resource "linode_instance" "worker" {
   region          = var.linode.region
   type            = var.linode.worker.type
   image           = var.linode.worker.os
+  tags            = [ var.application.label ]
   private_ip      = true
   authorized_keys = [ linode_sshkey.application.ssh_key ]
   depends_on      = [ linode_instance.manager ]
@@ -79,6 +81,7 @@ resource "linode_nodebalancer" "application" {
   label                = var.application.label
   region               = var.linode.region
   client_conn_throttle = var.linode.balancer.connectionThrottle
+  tags                 = [ var.application.label ]
   depends_on           = [ linode_instance.manager, linode_instance.worker ]
 }
 
