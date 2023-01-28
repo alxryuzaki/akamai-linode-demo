@@ -86,7 +86,8 @@ The tools/services used are:
 Environments variables needed in this phase:
 - `TERRAFORM_CLOUD_TOKEN`: Token used to authenticate with Terraform Cloud.
 - `ENVIRONMENT_ATTRIBUTES`: Contains all attributes needed for Terraform IaC files. If the environment variables doesn't
-exist, it will use the file `$HOME/.environment.tfvars`.
+exist, it will use the file `$HOME/.environment.tfvars`. This file must contains the values of the variables defined in 
+`iac/variables.tf`.
 
 ### Comments
 - **If any phase got errors or violations, the pipeline will stop.**
