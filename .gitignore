@@ -1,0 +1,8 @@
+/.idea/
+/.gradle*
+/backend/build/
+/iac/.env
+/iac/.terraform*
+/iac/*.tfstate*
+/iac/.edgerc
+/iac/kubeconfig

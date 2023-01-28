@@ -1,0 +1,151 @@
+# Stack namespace definition.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: akamai-linode-demo
+---
+# Database service deployment definition.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: akamai-linode-demo
+  name: database
+  labels:
+    app: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_ID}/demo-database:${DATABASE_BUILD_VERSION}
+          imagePullPolicy: Always
+      restartPolicy: Always
+---
+# Database service port expose definition.
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akamai-linode-demo
+  name: database
+  labels:
+    app: database
+spec:
+  ports:
+    - name: database-3306-tcp
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+  selector:
+    app: database
+  type: ClusterIP
+---
+# Backend service deployment definition.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: akamai-linode-demo
+  name: backend
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_ID}/demo-backend:${BACKEND_BUILD_VERSION}
+          imagePullPolicy: Always
+      restartPolicy: Always
+---
+# Backend service port expose definition.
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akamai-linode-demo
+  name: backend
+  labels:
+    app: backend
+spec:
+  ports:
+    - name: backend-8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    # - name: backend-8000-tcp
+    #   port: 8000
+    #   protocol: TCP
+    #   targetPort: 8000
+  selector:
+    app: backend
+  type: ClusterIP
+---
+# Frontend service deployment definition.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  namespace: akamai-linode-demo
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_ID}/demo-frontend:${FRONTEND_BUILD_VERSION}
+          imagePullPolicy: Always
+      restartPolicy: Always
+---
+# Frontend service port expose definition.
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: akamai-linode-demo
+  name: frontend
+  labels:
+    app: frontend
+spec:
+  ports:
+    - name: frontend-80-tcp
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: frontend
+  type: ClusterIP
+---
+# Ingress definition using Traefik.
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: akamai-linode-demo
+  name: ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80

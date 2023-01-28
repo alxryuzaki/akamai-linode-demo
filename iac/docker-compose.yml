@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  # Database service.
+  database:
+    build:
+      context: ../database
+    platform: linux/amd64
+    image: ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_ID}/demo-database:${DATABASE_BUILD_VERSION}
+    container_name: database
+    hostname: database
+    # ports:
+    #   - "3306:3306"
+
+  # Backend service.
+  backend:
+    build:
+      context: ../backend
+    platform: linux/amd64
+    image: ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_ID}/demo-backend:${BACKEND_BUILD_VERSION}
+    container_name: backend
+    hostname: backend
+    # ports:
+    #   - "8080:8080"
+    #   - "8000:8000"
+    depends_on:
+      - database
+
+  # Frontend service.
+  frontend:
+    build:
+      context: ../frontend
+    platform: linux/amd64
+    image: ${DOCKER_REGISTRY_URL}/${DOCKER_REGISTRY_ID}/demo-frontend:${FRONTEND_BUILD_VERSION}
+    container_name: frontend
+    hostname: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

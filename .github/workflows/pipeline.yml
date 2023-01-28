@@ -1,0 +1,87 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      - "main"
+    paths-ignore:
+      - "LICENSE"
+      - "*.md"
+      - ".gitignore"
+
+jobs:
+  run:
+    name: Jobs
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. Fetch project files
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: 2. Install Snyk client
+        run: npm install snyk@latest -g
+
+      - name: 3. Install Terraform client
+        run: npm install terraform@latest -g
+
+      - name: 4. Install Compiler
+        uses: actions/setup-java@v3.9.0
+        with:
+          distribution: corretto
+          java-version: 11
+
+      - name: 5. Compile & Build
+        run: ./build.sh
+
+      - name: 6. Unit & Integration Tests
+        run: ./test.sh
+
+      - name: 7. Code analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_PROJECT_KEY: ${{ secrets.SONAR_PROJECT_KEY }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_URL: ${{ secrets.SONAR_URL }}
+        run: ./codeAnalysis.sh
+
+      - name: 8. Code quality gate
+        uses: jkumar19/sonar-build-breaker@3.0.0
+        with:
+          sonar_branch: main
+          project_key: ${{ secrets.SONAR_PROJECT_KEY }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          sonar_url: ${{ secrets.SONAR_URL }}
+
+      - name: 9. IaC (Infrastructure as Code) analysis
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: ./iacAnalysis.sh
+
+      - name: 10. Libraries analysis
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: ./librariesAnalysis.sh
+
+      - name: 11. Packaging
+        env:
+          DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
+          DOCKER_REGISTRY_ID: ${{ secrets.DOCKER_REGISTRY_ID }}
+        run: ./package.sh
+
+      - name: 12. Packages analysis
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: ./packageAnalysis.sh
+
+      - name: 13. Publishing
+        env:
+          DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        run: ./publish.sh
+
+      - name: 14. Deploy
+        env:
+          TERRAFORM_CLOUD_TOKEN: ${{ secrets.TERRAFORM_CLOUD_TOKEN }}
+          ENVIRONMENT_ATTRIBUTES: ${{ secrets.ENVIRONMENT_ATTRIBUTES }}
+        run: ./deploy.sh
