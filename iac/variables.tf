@@ -36,7 +36,7 @@ variable "linode" {
       label = "demo-worker"
       type  = "g6-standard-2"
       os    = "linode/debian11"
-      user  = "root"
+      user  = "user"
     }
   }
 }
