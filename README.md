@@ -95,14 +95,16 @@ exist, it will use the file `$HOME/.environment.tfvars`. This file must contains
 - **You can define the secret in the repository settings.**
 - **DON'T EXPOSE OR COMMIT ANY SECRET IN THE PROJECT.**
 
-### Architecture
-The application uses:
-- [`Java 11`](https://www.oracle.com/br/java/technologies/javase-jdk11-downloads.html) - Programming Language.
+### Architecture and requirements.
+- [`Java 11`](https://www.java.com/en/) - Programming language. 
 - [`Amazon Corretto`](https://aws.amazon.com/pt/corretto/?filtered-posts.sort-by=item.additionalFields.createdDate&filtered-posts.sort-order=desc) - OpenJDK installation.
 - [`Spring Boot 2.7.x`](https://spring.io) - Web development framework.
-- [`Gradle 6.8.x`](https://www.gradle.org) - Automation tool.
+- [`Gradle 6.9.x`](https://www.gradle.org) - Automation tool.
 - [`Mockito 3.x`](https://site.mockito.org/) - Test framework.
 - [`JUnit 5.x`](https://junit.org/junit5) - Test framework.
+- [`Terraform 1.3.x`](https://www.terraform.io) - IaC automation tool.
+- [`Snyk CLI 1.x`](https://snyk.io) - CLI for the SAST tool.
+- [`Kubectl`](https://kubernetes.io/docs/tasks/tools/) - Kubernetes CLI.
 - [`MariaDB 10.x`](https://mariadb.com/) - Database server.
 - [`Flyway 9.12.x`](https://flywaydb.org/) - Database versioning.
 - [`Nginx 1.x`](https://www.nginx.com/****) - Web server.
@@ -115,13 +117,14 @@ For further documentation please check the documentation of each tool/service.
 1. `Linux` or `macOS` operating system.
 2. You need an IDE such as [`IntelliJ`](https://www.jetbrains.com/pt-br/idea).
 3. You need an account in the following services:
-`GitHub, Sonarcloud, Snyk, Linode, Terraform Cloud and Akamai`.
+`GitHub`, `Sonarcloud`, `Snyk`, `Linode`, `Terraform Cloud` and `Akamai`.
 4. You need to set the environment variables described above in you system.
 5. The tokens and credentials for each service must be defined in the UI of each service. Please refer the service 
 documentation.
 6. Fork this project from [`GitHub`](https://www.github.com).
-7. Import the project in IDE.
-8. Commit some changes in the code and follow the execution of the pipeline in [`GitHub`](https://www.github.com).
+7. Install `Amazon Corretto`, `Gradle`, `Terraform`, `Snyk CLI`, `Kubectl` and `Docker` on your local environment.
+8. Import the project in IDE.
+9. Commit some changes in the code and follow the execution of the pipeline in [`GitHub`](https://www.github.com).
 
 ### How to run it locally
 1. In the project directory, execute the scripts below:
